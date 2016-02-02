@@ -1,7 +1,7 @@
 /* Here is the place to declare an application.
  * An appliction is a directory that includes:
  *  1. 'public' subdirectory with static content ('index.html' must be here)
- *  2. node.js javascript file with the same name as the app or other one declared in package.json
+ *  2. node.js javascript file with the same name as the app
  *     this file must export 'WebSocketHandle' class like one is shown below
  */
 
