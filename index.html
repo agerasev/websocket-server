@@ -1,0 +1,28 @@
+<!DOCTYPE 'html'>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Hello Node.js</title>
+	<script language='javascript' type='text/javascript'>
+		var wsProto = 'ws:', wsPort = 8000;
+		if(window.location.protocol == 'https:') { wsProto = 'wss:'; wsPort = 8443; }
+		var websocket = new WebSocket(wsProto + '//' + window.location.hostname + ':' + wsPort + '/');
+		websocket.onopen = function(event) {
+			console.log('ws open');
+			websocket.send('hello server');
+		};
+		websocket.onclose = function(event) { 
+			console.log('ws close');
+		};
+		websocket.onmessage = function(event) {
+			console.log('ws message: ' + event.data);
+		};
+		websocket.onerror = function(event) { 
+			console.error('ws error');
+		};
+	</script>
+</head>
+<body>
+	Hello, Node.js
+</body>
+</html>
