@@ -1,5 +1,3 @@
 node_modules
-deplist.txt
-.openshift
 *.sublime*
 *.log
