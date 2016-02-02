@@ -5,12 +5,20 @@
  *     this file must export 'WebSocketHandle' class like one is shown below
  */
 
+// list of applictions - add here your applications
+var appList = [
+	"chat"
+];
+
 // WebSocketHandle class example
 function WebSocketHandle(websocket) {
 	var self = this;
 	this.websocket = websocket;
 	this.open = function() {
 		// add open listener code here
+		for(var i = 0; i < appList.length; ++i) {
+			self.websocket.send(appList[i]);
+		}
 	}
 	this.close = function(code, message) {
 		// add close listener code here
@@ -22,11 +30,6 @@ function WebSocketHandle(websocket) {
 		// add error listener code here
 	}
 }
-
-// list of applictions - add here your applications
-var appList = [
-	"chat"
-];
 
 module.exports.list = appList;
 module.exports.WebSocketHandle = WebSocketHandle;

@@ -15,6 +15,11 @@
 		};
 		websocket.onmessage = function(event) {
 			console.log('ws message: ' + event.data);
+			var appName = event.data;
+			var link = document.createElement('a');
+			link.href = '/' + appName + '/';
+			link.innerHTML = appName;
+			document.getElementById('apps').appendChild(link);
 		};
 		websocket.onerror = function(event) { 
 			console.error('ws error');
@@ -22,6 +27,10 @@
 	</script>
 </head>
 <body>
-	Hello, Node.js
+	Server for WebSocket applictions hosted at OpenShift and powered by Node.js<br/>
+	Fork me on GitHub: <a href="https://github.com/nthend/websocket-server">github.com/nthend/websocket-server</a><br/>
+	<br/>
+	Available applications:	
+	<div id='apps'></div>
 </body>
 </html>
