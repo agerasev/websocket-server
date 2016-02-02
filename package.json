@@ -18,8 +18,8 @@
   },
 
   "dependencies": {
-    "ws": ">= 1.0.1",
-    "mmmagic": ">= 0.4.1"
+    "express": "4.x",
+    "ws": "1.x"
   },
   "devDependencies": {},
   "bundleDependencies": [],
