@@ -15,10 +15,11 @@ function WebSocketHandle(websocket) {
 	var self = this;
 	this.websocket = websocket;
 	this.open = function() {
-		// add open listener code here
+		// add open listener code instead
 		for(var i = 0; i < appList.length; ++i) {
 			self.websocket.send(appList[i]);
 		}
+		websocket.close(1000, 'Apps List Loaded');
 	}
 	this.close = function(code, message) {
 		// add close listener code here

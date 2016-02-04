@@ -22,9 +22,9 @@ for(var i = 0; i < appsList.length; ++i) {
 	var app = appsList[i];
 	var Handle;
 	try {
-		Handle = require('./' + app + '/' + app + '.js').WebSocketHandle;
+		Handle = require('./' + app + '/main.js').WebSocketHandle;
 	} catch(e) {
-		console.error('cannot find app "%s"', app);
+		console.error('cannot find app "' + app + '": ' + e);
 		continue;
 	}
 	expressApp.use('/' + app, express.static(__dirname + '/' + app + '/public'));
@@ -56,7 +56,6 @@ var wsServer = new ws.Server(wsServerConfig);
 wsServer.on('connection', function (websocket) {
 	var path = require('url').parse(websocket.upgradeReq.url).pathname;
 	var app = path.replace(/\/+/,'/').replace(/\/+$/,'').replace(/^\//,'');
-	console.log(app);
 	var Handle = appHandles[app];
 	if(Handle) {
 		var wshandle = new Handle(websocket);
