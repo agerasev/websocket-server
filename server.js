@@ -1,5 +1,6 @@
-var host = process.env.OPENSHIFT_NODEJS_IP || 'localhost';
-var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var host = process.env.OPENSHIFT_NODEJS_IP   || process.env.IP   || 'localhost';
+var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080;
+var wsport = process.env.WSPORT;
 
 
 // initialize express
@@ -49,8 +50,8 @@ httpServer.listen(port, host);
 var ws = require('ws');
 
 wsServerConfig = {server: httpServer};
-if(host == 'localhost')
-	wsServerConfig.port = 8000;
+if(wsport)
+	wsServerConfig.port = wsport;
 var wsServer = new ws.Server(wsServerConfig);
 wsServer.on('connection', function (websocket) {
 	var path = require('url').parse(websocket.upgradeReq.url).pathname;

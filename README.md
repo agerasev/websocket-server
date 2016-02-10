@@ -16,7 +16,7 @@ You can run this server at your local machine (you heed to have `nodejs` and `np
 git clone https://github.com/nthend/websocket-server.git
 cd websocket-server
 npm install
-npm start
+./start-local.sh
 ```
 
 Or you can host it on some hosting servers (for example [OpenShift](https://www.openshift.com/) is a free one)
