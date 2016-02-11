@@ -152,6 +152,6 @@ process.on('exit', function() { terminate(); });
 ].forEach(function(element, index, array) {
     process.on(element, function() { 
     	console.log('[info] received %s - terminating server ...', element);
-    	terminate(); 
+    	process.exit(1);
     });
 });
