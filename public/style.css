@@ -89,12 +89,12 @@
 
 .app-text-container {
 	display: inline-block;
-	margin-left: 16px;
 	vertical-align: top;
 }
 
 .app-image {
 	display: inline-block;
+	margin-right: 16px;
 }
 
 #openshift-link {

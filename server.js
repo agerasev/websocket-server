@@ -23,9 +23,9 @@ for(var i = 0; i < appsList.length; ++i) {
 	var app = appsList[i];
 	var Handle;
 	try {
-		Handle = require('./' + app + '/main.js').WebSocketHandle;
+		Handle = require('./' + app).WebSocketHandle;
 	} catch(e) {
-		console.error('cannot find app "' + app + '": ' + e);
+		console.error('cannot find app "' + app + '": ' + e + ', file: ' + e.fileName + ', line: ' + e.lineNumber);
 		continue;
 	}
 	expressApp.use('/' + app, express.static(__dirname + '/' + app + '/public'));

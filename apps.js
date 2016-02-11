@@ -7,7 +7,8 @@
 
 // list of applictions - add here your applications
 var appList = [
-	"chat"
+	"chat",
+	"quad-world"
 ];
 
 // WebSocketHandle class example
