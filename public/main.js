@@ -1,33 +1,33 @@
-function addAppEntry(path) {
-	$.ajax(path + 'about.json').done(function(about) {
-		var entry = document.createElement('a');
-		entry.href = path;
-		entry.className = 'app';
+function addAppEntry(name, info) {
+	var path = '/' + name + '/';
 
-		var name = document.createElement('div');
-		name.className = 'app-name';
-		name.innerHTML = about.name;
+	var entry = document.createElement('a');
+	entry.href = path;
+	entry.className = 'app';
 
-		var desc = document.createElement('div');
-		desc.className = 'app-desc';
-		desc.innerHTML = about.description;
+	var name = document.createElement('div');
+	name.className = 'app-name';
+	name.innerHTML = info.name;
 
-		if(about.image) {
-			var img = document.createElement('img');
-			img.className = 'app-image';
-			img.src = path + about.image;
-			entry.appendChild(img);
-		}
+	var desc = document.createElement('div');
+	desc.className = 'app-desc';
+	desc.innerHTML = info.description;
 
-		var textContainer = document.createElement('div');
-		textContainer.className = 'app-text-container';
-		textContainer.appendChild(name);
-		textContainer.appendChild(desc);
+	if(info.image) {
+		var img = document.createElement('img');
+		img.className = 'app-image';
+		img.src = path + info.image;
+		entry.appendChild(img);
+	}
 
-		entry.appendChild(textContainer);
+	var textContainer = document.createElement('div');
+	textContainer.className = 'app-text-container';
+	textContainer.appendChild(name);
+	textContainer.appendChild(desc);
 
-		document.getElementById('apps').appendChild(entry);
-	});
+	entry.appendChild(textContainer);
+
+	document.getElementById('apps').appendChild(entry);
 }
 
 function ready() {
@@ -43,8 +43,10 @@ function ready() {
 	};
 	websocket.onmessage = function(event) {
 		console.log('ws message: ' + event.data);
-		var path = '/' + event.data + '/';
-		addAppEntry(path);
+		var apps = JSON.parse(event.data);
+		for(var name in apps) {
+			addAppEntry(name, apps[name]);
+		}
 	};
 	websocket.onerror = function(event) { 
 		console.error('websocket error: ' + event.error);

@@ -25,9 +25,16 @@ var apps = {'': {Client: function (websocket) {
 	this.websocket = websocket;
 	this.open = function() {
 		// add open listener code instead
+		var appInfoList = {};
 		for(var i = 0; i < appNames.length; ++i) {
-			self.websocket.send(appNames[i]);
+			var appName = appNames[i];
+			var info = null;
+			try {
+				info = require('./apps/' + appName + '/public/about.json');
+			} catch(e){}
+			appInfoList[appNames[i]] = info;
 		}
+		self.websocket.send(JSON.stringify(appInfoList));
 		websocket.close(1000, 'Apps List Loaded');
 	}
 	this.close = function(code, message) {
