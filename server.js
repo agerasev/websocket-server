@@ -17,6 +17,7 @@ expressApp.use(express.static(__dirname + '/public'));
 
 
 // load apps
+
 var appNames = null;
 
 var apps = {'': {Client: function (websocket) {
@@ -42,63 +43,67 @@ var apps = {'': {Client: function (websocket) {
 
 var fs = require('fs');
 
-console.log('loading apps ...');
 fs.readdir('./apps/', function(err, dirs) {
+	console.log('loading apps ...');
 	if(err) {
-		console.error('[error] cannot list files in "./apps/" dir: ' + err);
+		console.error('cannot list files in "apps" dir: ' + err);
 		return;
 	}
 	appNames = dirs;
 	for(var i = 0; i < appNames.length; ++i) {
 		var appName = appNames[i];
 		var app = null;
+		console.log('"%s" app:', appName);
 		try {
 			app = require('./apps/' + appName);
 		} catch(e) {
-			console.error('[error] cannot find server-side app "' + appName + '": ' + e/* + ', file: ' + e.fileName + ', line: ' + e.lineNumber*/);
+			console.error('\tcannot load server-side app "' + appName + '": ' + e/* + ', file: ' + e.fileName + ', line: ' + e.lineNumber*/);
 		}
 		apps[appName] = app;
 
 		expressApp.use('/' + appName, express.static(__dirname + '/apps/' + appName + '/public'));
-		console.log('[info] "%s" loaded', appName);
-
+		
 		if(app) {
 			if(!app.Client) {
-				console.log('[warning] "%s" does not implement "Client" class', appName);
+				console.log('\t"%s" does not implement "Client" class', appName);
 			}
 
 			if(!app.setDBCollection) {
-				console.error('[warning] "%s" does not provide "setDBCollection" function', appName);
+				console.error('\t"%s" does not provide "setDBCollection" function', appName);
 			}
 		}
+
+		console.log('\t"%s" loaded', appName);
 	}
 });
+console.log('');
+
 
 // initialize database
 
 var mongodb = require('mongodb');
 var db = null;
-console.log('[info] conecting database at ' + mongodbUrl + ' ...');
 mongodb.MongoClient.connect(mongodbUrl + mongodbDb, function(err, mdb) {
+	console.log('db: conecting database at ' + mongodbUrl + ' ...');
 	if(err) {
-		console.err("[error] db: cannot connect mongodb: " + err);
-	} else {
-		console.log("[info] db: mongodb connected");
-		db = mdb;
-		for(var appName in apps) {
-			var app = apps[appName];
-			if(app && app.setDBCollection) {
-				(function(appName, setColl) {
-					db.createCollection(appName, function(err, coll) {
-						if(err) {
-							console.log('[error] db: cannot create "' + appName + '" collection: ' + err);
-						} else {
-							console.log('[info] db: "' + appName + '" collection successfully created or it already exists');
-							setColl(coll);
-						}
-					});
-				})(appName, app.setDBCollection);
-			}
+		console.err("db: cannot connect mongodb: " + err);
+		return;
+	}
+	console.log("db: mongodb connected");
+	db = mdb;
+	for(var appName in apps) {
+		var app = apps[appName];
+		if(app && app.setDBCollection) {
+			(function(appName, setColl) {
+				db.createCollection(appName, function(err, coll) {
+					if(err) {
+						console.log('db: cannot create "' + appName + '" collection: ' + err);
+						return;
+					}
+					console.log('db: "' + appName + '" collection successfully created or it already exists');
+					setColl(coll);
+				});
+			})(appName, app.setDBCollection);
 		}
 	}
 });
@@ -150,8 +155,9 @@ wsServer.on('connection', function (websocket) {
 // setup termination handlers
 
 function terminate() {
+	console.log('closing db');
 	db.close();
-    console.log('[info] server stopped');
+	console.log('server stopped');
 };
 
 process.on('exit', function() { terminate(); });
@@ -159,8 +165,8 @@ process.on('exit', function() { terminate(); });
 ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
  'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
 ].forEach(function(element, index, array) {
-    process.on(element, function() { 
-    	console.log('[info] received %s - terminating server ...', element);
-    	process.exit(1);
-    });
+	process.on(element, function() { 
+		console.log('received %s - terminating server ...', element);
+		process.exit(1);
+	});
 });

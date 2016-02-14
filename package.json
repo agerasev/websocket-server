@@ -6,7 +6,7 @@
     "name": "NthenD",
     "email": "nthend.iipa@gmail.com"
   },
-  "homepage": "http://ws-nthend.rhcloud.com/",
+  "homepage": "http://wsapps-nthend.rhcloud.com/",
   "repository": {
     "type": "git",
     "url": "https://github.com/nthend/websocket-server"

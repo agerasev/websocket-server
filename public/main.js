@@ -31,8 +31,11 @@ function addAppEntry(path) {
 }
 
 function ready() {
+	$('#loader').append(createLoader('Loading...'));
+
 	var websocket = openWebSocket();
 	websocket.onopen = function(event) {
+		$('#loader').empty();
 		console.log('websocket opened');
 	};
 	websocket.onclose = function(event) { 

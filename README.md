@@ -16,7 +16,8 @@ You can run this server at your local machine (you heed to have `nodejs` and `np
 ```bash
 git clone https://github.com/nthend/websocket-server.git
 cd websocket-server
-./deploy-locally.sh
+./prepare.sh
+./start.sh
 ```
 
 Or you can host it on some hosting servers (for example [OpenShift](https://www.openshift.com/) is a free one)
@@ -38,7 +39,7 @@ Now your application can be detected by the server. Inside `./apps/appname` dire
 * Create `public` directory. Here you can put static content accessible via `http` or `https` using address: `http(s)://hostname/appname/filename`. 
 * In the `public` directory create `about.json` with fields that shown below. Also create `index.html` here as main page of your application. You can open websockets from this page via javascript. For this purpose you can use `/websocket.js` file from `/public`.
 
-After all run `./deploy-locally.sh` and visit `http://localhost:8080/` in your browser to see new application added to the list of apps. Click it to load it. Here you will see your main page from where you can open websocket connection to the server.
+After all run `./prepare.sh; ./start.sh` and visit `http://localhost:8080/` in your browser to see new application added to the list of apps. Click it to load it. Here you will see your main page from where you can open websocket connection to the server.
 
 ## Exported symbols
 
@@ -81,7 +82,7 @@ function setDBCollection(coll) {
 module.exports.setDBCollection = setDBCollection;
 ```
 
-## Appliction description
+## Application description
 
 Application description is contained in `public/about.json` file inside your app dir. 
 
@@ -93,7 +94,7 @@ Structure of `public/about.json`:
 	"image": "path/to/64x64_icon.png"
 }
 ```
-Icons must be placed also somewhere in public dir.
+Icons must be placed somewhere inside public dir.
 
 ## Examples
 
