@@ -1,6 +1,9 @@
 [submodule "chat"]
-	path = chat
+	path = apps/chat
 	url = https://github.com/nthend/websocket-chat.git
 [submodule "quad-world"]
-	path = quad-world
+	path = apps/quad-world
 	url = https://github.com/nthend/js-quad-world.git
+[submodule "roosters"]
+	path = apps/roosters
+	url = https://github.com/nthend/js-roosters.git

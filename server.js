@@ -17,8 +17,7 @@ expressApp.use(express.static(__dirname + '/public'));
 
 
 // load apps
-
-var appNames = require('./apps.json').list;
+var appNames = null;
 
 var apps = {'': {Client: function (websocket) {
 	var self = this;
@@ -41,31 +40,39 @@ var apps = {'': {Client: function (websocket) {
 	}
 }}};
 
+var fs = require('fs');
+
 console.log('loading apps ...');
-for(var i = 0; i < appNames.length; ++i) {
-	var appName = appNames[i];
-	var app = null;
-	try {
-		app = require('./' + appName);
-	} catch(e) {
-		console.error('[error] cannot find app "' + appName + '": ' + e + ', file: ' + e.fileName + ', line: ' + e.lineNumber);
-		continue;
+fs.readdir('./apps/', function(err, dirs) {
+	if(err) {
+		console.error('[error] cannot list files in "./apps/" dir: ' + err);
+		return;
 	}
+	appNames = dirs;
+	for(var i = 0; i < appNames.length; ++i) {
+		var appName = appNames[i];
+		var app = null;
+		try {
+			app = require('./apps/' + appName);
+		} catch(e) {
+			console.error('[error] cannot find server-side app "' + appName + '": ' + e/* + ', file: ' + e.fileName + ', line: ' + e.lineNumber*/);
+		}
+		apps[appName] = app;
 
-	expressApp.use('/' + appName, express.static(__dirname + '/' + appName + '/public'));
-	console.log('[info] "%s" loaded', appName);
+		expressApp.use('/' + appName, express.static(__dirname + '/apps/' + appName + '/public'));
+		console.log('[info] "%s" loaded', appName);
 
-	if(!app.Client) {
-		console.log('[warning] "%s" does not implement "Client" class', appName);
+		if(app) {
+			if(!app.Client) {
+				console.log('[warning] "%s" does not implement "Client" class', appName);
+			}
+
+			if(!app.setDBCollection) {
+				console.error('[warning] "%s" does not provide "setDBCollection" function', appName);
+			}
+		}
 	}
-
-	if(!app.setDBCollection) {
-		console.error('[warning] "%s" does not provide "setDBCollection" function', appName);
-	}
-
-	apps[appName] = app;
-}
-
+});
 
 // initialize database
 
@@ -80,19 +87,18 @@ mongodb.MongoClient.connect(mongodbUrl + mongodbDb, function(err, mdb) {
 		db = mdb;
 		for(var appName in apps) {
 			var app = apps[appName];
-			(function(setColl) {
-				if(setColl) {
+			if(app && app.setDBCollection) {
+				(function(appName, setColl) {
 					db.createCollection(appName, function(err, coll) {
 						if(err) {
 							console.log('[error] db: cannot create "' + appName + '" collection: ' + err);
 						} else {
 							console.log('[info] db: "' + appName + '" collection successfully created or it already exists');
-							if(setColl)
-								setColl(coll);
+							setColl(coll);
 						}
 					});
-				}
-			})(app.setDBCollection);
+				})(appName, app.setDBCollection);
+			}
 		}
 	}
 });
@@ -117,23 +123,26 @@ var wsServer = new ws.Server(wsServerConfig);
 wsServer.on('connection', function (websocket) {
 	var path = require('url').parse(websocket.upgradeReq.url).pathname;
 	var appName = path.replace(/\/+/,'/').replace(/\/+$/,'').replace(/^\//,'');
-	var Client = apps[appName].Client;
-	if(Client) {
-		var client = new Client(websocket);
-		client.open();
-		websocket.on('message', function (message, flags) {
-			client.receive(message, flags);
-		});
-		websocket.on('close', function (code, message) {
-			client.close(code, message);
-		});
-		websocket.on('error', function (error) {
-			client.error(error);
-		});
-	} else {
-		console.error('unknown app "%s"', appName);
-		websocket.send('unknown app "' + appName + '"');
-		websocket.close(1003, 'No Such App');
+	var app = apps[appName];
+	if(app) {
+		var Client = app.Client;
+		if(Client) {
+			var client = new Client(websocket);
+			client.open();
+			websocket.on('message', function (message, flags) {
+				client.receive(message, flags);
+			});
+			websocket.on('close', function (code, message) {
+				client.close(code, message);
+			});
+			websocket.on('error', function (error) {
+				client.error(error);
+			});
+		} else {
+			console.error('unknown app "%s"', appName);
+			websocket.send('unknown app "' + appName + '"');
+			websocket.close(1003, 'No Such App');
+		}
 	}
 });
 
