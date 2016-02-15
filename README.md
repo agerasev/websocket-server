@@ -2,7 +2,7 @@
 
 This server designed to host and run user [Node.js](https://nodejs.org/) web applications.
 
-Example instance of server you can find at [wsapps-nthend.rhcloud.com](http://wsapps-nthend.rhcloud.com/). 
+Example instance of server you can find at [wsapps-nthend.rhcloud.com](https://wsapps-nthend.rhcloud.com/). 
 
 Server provides for appliction:
 * Access to static content of application (.html, .css, .js files, images and etc.) via `http` or `https`
@@ -12,7 +12,7 @@ Server provides for appliction:
 
 ## Run the server
 
-You can run this server at your local machine (you heed to have `nodejs` and `npm` installed):
+You can run this server at your local machine (you need to have `nodejs` and `npm` installed):
 ```bash
 git clone https://github.com/nthend/websocket-server.git
 cd websocket-server
@@ -49,21 +49,21 @@ An application may exports some symbols for interacting with the server and, the
 
 `Client` is a constructor function. Server creates new `Client` instance on incoming websocket connection and binds methods of these new object to websocket events.
 
-Example of `Client` declaration and export in `index.js`:
+Example of `Client` declaration in `index.js`:
 ```javascript
 function Client(websocket) {
 	var self = this;
-	this.websocket = websocket;
-	this.open = function() {
+	self.websocket = websocket;
+	self.open = function() {
 		// add open listener code here
 	}
-	this.close = function(code, message) {
+	self.close = function(code, message) {
 		// add close listener code here
 	}
-	this.receive = function(message, flags) {
+	self.receive = function(message, flags) {
 		// add receive listener code here
 	}
-	this.error = function(error) {
+	self.error = function(error) {
 		// add error listener code here
 	}
 }

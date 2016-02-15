@@ -22,8 +22,8 @@ var appNames = null;
 
 var apps = {'': {Client: function (websocket) {
 	var self = this;
-	this.websocket = websocket;
-	this.open = function() {
+	self.websocket = websocket;
+	self.open = function() {
 		// add open listener code instead
 		var appInfoList = {};
 		for(var i = 0; i < appNames.length; ++i) {
@@ -37,13 +37,13 @@ var apps = {'': {Client: function (websocket) {
 		self.websocket.send(JSON.stringify(appInfoList));
 		websocket.close(1000, 'Apps List Loaded');
 	}
-	this.close = function(code, message) {
+	self.close = function(code, message) {
 		// add close listener code here
 	}
-	this.receive = function(message, flags) {
+	self.receive = function(message, flags) {
 		// add receive listener code here
 	}
-	this.error = function(error) {
+	self.error = function(error) {
 		// add error listener code here
 	}
 }}};
@@ -64,7 +64,7 @@ fs.readdir('./apps/', function(err, dirs) {
 		try {
 			app = require('./apps/' + appName);
 		} catch(e) {
-			console.error('\tcannot load server-side app "' + appName + '": ' + e/* + ', file: ' + e.fileName + ', line: ' + e.lineNumber*/);
+			console.error('\tcannot load server-side part of "' + appName + '": ' + e/* + ', file: ' + e.fileName + ', line: ' + e.lineNumber*/);
 		}
 		apps[appName] = app;
 
