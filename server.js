@@ -16,6 +16,7 @@ var expressApp = express();
 expressApp.use(express.static(__dirname + '/public'));
 
 
+
 // load apps
 
 var appNames = null;
@@ -101,14 +102,14 @@ mongodb.MongoClient.connect(mongodbUrl + mongodbDb, function(err, mdb) {
 	for(var appName in apps) {
 		var app = apps[appName];
 		if(app && app.setDBCollection) {
-			(function(appName, setColl) {
+			(function (appName, setDBCollection) {
 				db.createCollection(appName, function(err, coll) {
 					if(err) {
 						console.log('db: cannot create "' + appName + '" collection: ' + err);
 						return;
 					}
 					console.log('db: "' + appName + '" collection successfully created or it already exists');
-					setColl(coll);
+					setDBCollection(coll);
 				});
 			})(appName, app.setDBCollection);
 		}
@@ -128,7 +129,7 @@ httpServer.listen(port, host);
 
 var ws = require('ws');
 
-wsServerConfig = {server: httpServer};
+var wsServerConfig = {server: httpServer};
 if(wsport)
 	wsServerConfig.port = wsport;
 var wsServer = new ws.Server(wsServerConfig);
